@@ -4,12 +4,18 @@
  */
 package pacote;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author admlab
  */
 public class ControlPanel extends javax.swing.JFrame {
-
+    Registry reg;
+    RmiWebInterface objRmi;
     /**
      * Creates new form ControlPanel
      */
@@ -114,8 +120,27 @@ public class ControlPanel extends javax.swing.JFrame {
 
     private void btnWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWebActionPerformed
         if(btnWeb.isSelected()){
+            try{
+                this.reg=LocateRegistry.createRegistry(6666);
+                objRmi = new RmiWebImpl();
+                this.reg.rebind("ServidorWebChat",objRmi);
+                JOptionPane.showMessageDialog(null,"Servidor iniciado");
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,"Erro ativando servidor Rmi:" + e.getMessage());
+                e.printStackTrace();
+            }
             btnWeb.setText("Desativar");
         }else{
+            try{     
+                this.reg.unbind("ServidorWebChat");
+                
+                UnicastRemoteObject.unexportObject(this.objRmi, true);
+                UnicastRemoteObject.unexportObject(this.reg, true);
+                JOptionPane.showMessageDialog(null,"Servidor Web parado");
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null,"Erro parando servidor Rmi:" + e.getMessage());
+                e.printStackTrace();
+            }
             btnWeb.setText("Ativar");
         }
     }//GEN-LAST:event_btnWebActionPerformed

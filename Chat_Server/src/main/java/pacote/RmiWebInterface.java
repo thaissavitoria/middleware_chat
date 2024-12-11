@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
  *
  * @author admlab
  */
-public class RmiWebInterface extends Remote{
+public interface RmiWebInterface extends Remote{
     public boolean gravaMsg(String msg)throws RemoteException;
     
     public String recuperaMsg()throws RemoteException;
